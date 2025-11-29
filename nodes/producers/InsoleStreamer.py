@@ -28,8 +28,8 @@
 from nodes.producers.Producer import Producer
 from streams import InsoleStream
 
-from utils.print_utils import *
-from utils.zmq_utils import *
+from utils.time_utils import get_time
+from utils.zmq_utils import IP_LOOPBACK, PORT_BACKEND, PORT_KILL, PORT_MOTICON, PORT_SYNC_HOST
 import socket
 
 

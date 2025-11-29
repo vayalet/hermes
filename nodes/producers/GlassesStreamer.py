@@ -25,81 +25,105 @@
 #
 # ############
 
+import time
 from typing import Callable
-from nodes.producers.Producer import Producer
-from streams import GlassesStream
-
-from utils.print_utils import *
-from utils.zmq_utils import *
-
 import uvc
 from multiprocessing import Process, Queue, Event
 from queue import Empty
+
+from nodes.producers.Producer import Producer
+from streams import GlassesStream
+
+from utils.mp_utils import launch_callable
+from utils.time_utils import get_time, init_time
+from utils.zmq_utils import PORT_BACKEND, PORT_KILL, PORT_SYNC_HOST
+
 
 #######################################################
 #######################################################
 # A class for streaming videos from Pupil core cameras.
 #######################################################
 #######################################################
-def _get_frame(camera_name: str, cap: uvc.Capture, queue: Queue, get_buffer_fn: Callable) -> None:
-  try:
-    frame = cap.get_frame(timeout=5)
-    toa_s = get_time()
-    # if frame.data_fully_received:
-    out = {
-      "timestamp": frame.timestamp,
-      "index": frame.index,
-      "data": get_buffer_fn(frame)
-    }
-    queue.put((camera_name, out, toa_s))
-  except TimeoutError:
-    pass
-  except uvc.InitError as err:
-    print(f"[GlassesStreamer] Failed to init {camera_name}: {err}", flush=True)
-    pass
-  except uvc.StreamError as err:
-    print(f"[GlassesStreamer] Stream error for {camera_name}: {err}", flush=True)
-    pass
+class GlassesHandler:
+  def __call__(self,
+               ref_time_s: float,
+               camera_name: str,
+               camera_spec: dict,
+               queue: Queue,
+               video_image_format: str,
+               stop_event: Event,
+               keep_event: Event,
+               ready_event: Event
+  ):
+    init_time(ref_time_s)
+    self.queue = queue
+    self.camera_name = camera_name
+    self.camera_spec = camera_spec
+    self.cap: uvc.Capture
+
+    self._restart_cap_object()
+
+    if video_image_format == "mjpeg":
+      get_buffer_fn = lambda frame: bytes(frame.jpeg_buffer)
+    elif video_image_format == "bgr":
+      get_buffer_fn = lambda frame: frame.bgr
+    elif video_image_format == "yuv":
+      get_buffer_fn = lambda frame: frame.yuv
+    else:
+      get_buffer_fn = lambda _: None
+
+    ready_event.set()
+    keep_event.wait()
+
+    while not stop_event.is_set():
+      self._get_frame(get_buffer_fn)
+    self.cap.close()
 
 
-def _run_capture(camera_name: str, camera_spec: dict, queue: Queue, video_image_format: str, stop_event: Event, keep_event: Event):
-  devices = dict(map(lambda dev: (dev['name'], dev['uid']), uvc.device_list()))
-
-  cap = uvc.Capture(devices[camera_spec['name']])
-  cap.bandwidth_factor = camera_spec['bandwidth_factor']
-
-  for mode in cap.available_modes:
-    if (mode.width == camera_spec['resolution'][1] and
-        mode.height == camera_spec['resolution'][0] and
-        mode.fps == camera_spec['fps']):
-      cap.frame_mode = mode
-      break
-    # configure the controls on each `Capture` object (exposure, brightness, sharpness, etc)
-    controls_by_name = {c.display_name: c for c in cap.controls}
-
-  print(f"Settings controls for {camera_spec['name']}", flush=True) 
-  for ctrl_name, value in camera_spec.get('uvc_controls', {}).items():
-    ctrl = controls_by_name.get(ctrl_name)
+  def _restart_cap_object(self) -> None:
     try:
-      ctrl.value = value
-    except Exception as e:
-      print(f"Could not set control for {camera_spec['name']} '{ctrl_name}' to {value}: {e}")
+      devices = dict(map(lambda dev: (dev['name'], dev['uid']), uvc.device_list()))
 
-  if video_image_format == "mjpeg":
-    get_buffer_fn = lambda frame: bytes(frame.jpeg_buffer)
-  elif video_image_format == "bgr":
-    get_buffer_fn = lambda frame: frame.bgr
-  elif video_image_format == "yuv":
-    get_buffer_fn = lambda frame: frame.yuv
-  else:
-    get_buffer_fn = lambda _: None
+      self.cap = uvc.Capture(devices[self.camera_spec['name']])
+      self.cap.bandwidth_factor = self.camera_spec['bandwidth_factor']
 
-  while not stop_event.is_set(): # TODO @vayalet: consider that here on every frame grabbing attempt, it will waste time checking with OS the event status
-    if not keep_event.is_set():
-      time.sleep(0.01)
-      continue
-    _get_frame(camera_name, cap, queue, get_buffer_fn)
-  cap.close()
+      for mode in self.cap.available_modes:
+        if (mode.width == self.camera_spec['resolution'][1] and
+            mode.height == self.camera_spec['resolution'][0] and
+            mode.fps == self.camera_spec['fps']):
+          self.cap.frame_mode = mode
+          break
+        # configure the controls on each `Capture` object (exposure, brightness, sharpness, etc)
+        controls_by_name = {c.display_name: c for c in self.cap.controls}
+
+      print(f"Settings controls for {self.camera_spec['name']}", flush=True) 
+      for ctrl_name, value in self.camera_spec.get('uvc_controls', {}).items():
+        ctrl = controls_by_name.get(ctrl_name)
+        try:
+          ctrl.value = value
+        except Exception as e:
+          print(f"Could not set control for {self.camera_spec['name']} '{ctrl_name}' to {value}: {e}")
+    except:
+      time.sleep(1)
+
+
+  def _get_frame(self, get_buffer_fn: Callable) -> None:
+    try:
+      frame = self.cap.get_frame(timeout=1)
+      toa_s = get_time()
+      out = {
+        "timestamp": frame.timestamp,
+        "index": frame.index,
+        "data": get_buffer_fn(frame)
+      }
+      self.queue.put((self.camera_name, out, toa_s))
+    except uvc.InitError as err:
+      print(f"[GlassesStreamer] Failed to init {self.camera_name}: {err}", flush=True)
+    except uvc.StreamError as err:
+      print(f"[GlassesStreamer] Stream error for {self.camera_name}: {err}", flush=True)
+    except (TimeoutError, NameError, AttributeError) as err:
+      print(f"[GlassesStreamer] Reconnecting {self.camera_name}: {err}", flush=True)
+      self._restart_cap_object()
 
 
 class GlassesStreamer(Producer):
@@ -128,6 +152,7 @@ class GlassesStreamer(Producer):
     self._cap_queue: Queue = Queue()
     self._stop_event: Event = Event()
     self._keep_event: Event = Event()
+    self._ref_time_s = logging_spec['ref_time_s']
     
     stream_info = {
       "camera_mapping": self._camera_mapping,
@@ -155,18 +180,27 @@ class GlassesStreamer(Producer):
 
   def _connect(self) -> bool:
     self._cap_procs: list[Process] = []
+    self._cap_handlers: list[GlassesHandler] = []
+    ready_events: list[Event] = []
     # launch each capture subprocess
-    for cam in self._camera_mapping.keys(): 
-      proc = Process(target=_run_capture, args=(cam,
-                                                self._camera_mapping[cam],
-                                                self._cap_queue,
-                                                self._video_image_format,
-                                                self._stop_event,
-                                                self._keep_event))
+    for cam in self._camera_mapping.keys():
+      handler = GlassesHandler()
+      ready_event = Event()
+      proc = Process(target=launch_callable, args=(handler,
+                                                   self._ref_time_s,
+                                                   cam,
+                                                   self._camera_mapping[cam],
+                                                   self._cap_queue,
+                                                   self._video_image_format,
+                                                   self._stop_event,
+                                                   self._keep_event,
+                                                   ready_event))
       self._cap_procs.append(proc)
+      self._cap_handlers.append(handler)
+      ready_events.append(ready_event)
       proc.start()
-    # TODO: read their pipe with confirmation that each connected to the camera 
-    # NOTE: for now will immediately start producing data
+    # Will wait until child UVC processes have set up
+    for event in ready_events: event.wait()
     return True
 
 

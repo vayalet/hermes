@@ -177,8 +177,10 @@ if __name__ == '__main__':
         print(e)
 
   # Initialize folders and other chore data, and share programmatically across Node specs.
+  log_time_s = args.log_time_s if args.log_time_s is not None else get_time()
+  ref_time_s = get_ref_time()
   script_dir: str = os.path.dirname(os.path.realpath(__file__))
-  (log_time_str, log_time_s) = get_time_str(time_s=args.log_time_s, return_time_s=True)
+  (log_time_str, _) = get_time_str(time_s=log_time_s, return_time_s=True)
   log_dir: str = os.path.join(script_dir,
                               'data',
                                f'project_{args.experiment["project"]}', # to be removed 
@@ -193,6 +195,7 @@ if __name__ == '__main__':
   args.logging_spec['log_dir'] = log_dir
   args.logging_spec['experiment'] = args.experiment
   args.logging_spec['log_time_s'] = log_time_s
+  args.logging_spec['ref_time_s'] = ref_time_s
 
   # Add logging spec to each producer.
   for spec in args.producer_specs:
@@ -203,6 +206,7 @@ if __name__ == '__main__':
     spec['logging_spec']['log_dir'] = log_dir
     spec['logging_spec']['experiment'] = args.experiment # type: ignore
     spec['logging_spec']['log_time_s'] = log_time_s
+    spec['logging_spec']['ref_time_s'] = ref_time_s
     spec['log_history_filepath'] = log_history_filepath
 
   # Add logging spec to each consumer.
@@ -210,6 +214,7 @@ if __name__ == '__main__':
     spec['logging_spec']['log_dir'] = log_dir
     spec['logging_spec']['experiment'] = args.experiment # type: ignore
     spec['logging_spec']['log_time_s'] = log_time_s
+    spec['logging_spec']['ref_time_s'] = ref_time_s
     spec['log_history_filepath'] = log_history_filepath
 
   producer_specs: list[dict] = args.producer_specs

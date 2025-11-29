@@ -30,7 +30,6 @@ import queue
 from pypylon import pylon
 import numpy as np
 
-from utils.print_utils import *
 from utils.time_utils import get_time
 
 

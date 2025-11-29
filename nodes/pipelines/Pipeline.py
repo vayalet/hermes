@@ -25,14 +25,14 @@
 #
 # ############
 
+from collections import OrderedDict
 from nodes.Node import Node
 from nodes.producers.Producer import Producer
 from handlers.LoggingHandler import Logger
 from streams import Stream
 
 from utils.msgpack_utils import deserialize, serialize
-from utils.dict_utils import *
-from utils.zmq_utils import *
+from utils.zmq_utils import CMD_END, CMD_EXIT, DNS_LOCALHOST, PORT_BACKEND, PORT_FRONTEND, PORT_KILL, PORT_SYNC_HOST
 
 from abc import abstractmethod
 import threading
@@ -59,7 +59,7 @@ class Pipeline(Node):
     from nodes.pipelines import PIPELINES
     from nodes.producers import PRODUCERS
 
-    super().__init__(ref_time=logging_spec["log_time_s"],
+    super().__init__(ref_time=logging_spec["ref_time_s"],
                      host_ip=host_ip,
                      port_sync=port_sync,
                      port_killsig=port_killsig)

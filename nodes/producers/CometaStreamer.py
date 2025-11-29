@@ -29,7 +29,7 @@ from nodes.producers.Producer import Producer
 from streams.CometaStream import CometaStream
 
 from handlers.CometaWaveplus.CometaHandler import CometaFacade
-from utils.zmq_utils import *
+from utils.zmq_utils import PORT_BACKEND, PORT_KILL, PORT_SYNC_HOST
 
 from utils.time_utils import get_time
 

@@ -28,6 +28,8 @@
 import time as _time
 from time import perf_counter
 from threading import Lock
+from datetime import datetime, timezone
+from dateutil import tz
 
 
 class SingletonMeta(type):
@@ -44,16 +46,34 @@ class SingletonMeta(type):
 
 class SystemTime(metaclass=SingletonMeta):
   def __init__(self):
-    self._ref_time = _time.time() - perf_counter()
+    rough_time = _time.time()
+    counter = perf_counter()
+    self._ref_time = rough_time - counter
+    print(
+      f"Reference time: {self._ref_time}, rough: {rough_time}, counter: {counter}",
+      flush=True,
+    )
 
   def time(self) -> float:
     return self._ref_time + perf_counter()
-  
-  def set_ref_time(self, ref_time: float) -> None:
+
+  def _get_ref_time(self) -> float:
+    return self._ref_time
+
+  def _set_ref_time(self, ref_time: float) -> None:
     self._ref_time = ref_time
 
+
 def init_time(ref_time: float) -> None:
-  SystemTime().set_ref_time(ref_time)
+  SystemTime()._set_ref_time(ref_time)
+  print(
+    f"Initialized system time with ref time: {ref_time} at {get_time()}", flush=True
+  )
+
+
+def get_ref_time() -> float:
+  return SystemTime()._get_ref_time()
+
 
 def get_time() -> float:
   return SystemTime().time()
@@ -85,7 +105,6 @@ def get_time() -> float:
 #
 ############
 
-import time
 from datetime import datetime, timezone
 from dateutil import tz
 

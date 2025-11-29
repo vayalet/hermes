@@ -28,8 +28,8 @@
 from nodes.producers.Producer import Producer
 from streams import DummyStream
 
-from utils.print_utils import *
-from utils.zmq_utils import *
+from utils.time_utils import get_time
+from utils.zmq_utils import PORT_BACKEND, PORT_KILL, PORT_SYNC_HOST
 import time
 
 

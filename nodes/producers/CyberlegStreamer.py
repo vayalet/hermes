@@ -28,8 +28,7 @@
 from nodes.producers.Producer import Producer
 from streams import CyberlegStream
 
-from utils.print_utils import *
-from utils.zmq_utils import *
+from utils.zmq_utils import IP_PROSTHESIS, PORT_BACKEND, PORT_KILL, PORT_PROSTHESIS, PORT_SYNC_HOST
 from utils.time_utils import get_time
 import socket
 import struct

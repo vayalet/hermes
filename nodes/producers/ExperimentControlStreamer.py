@@ -28,8 +28,7 @@
 from nodes.producers.Producer import Producer
 from streams import ExperimentControlStream
 
-from utils.print_utils import *
-from utils.zmq_utils import *
+from utils.zmq_utils import PORT_BACKEND, PORT_KILL, PORT_SYNC_HOST
 
 
 #####################################################################

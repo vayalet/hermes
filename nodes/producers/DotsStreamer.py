@@ -29,11 +29,12 @@ from nodes.producers.Producer import Producer
 from streams import DotsStream
 
 from handlers.MovellaDots.MovellaHandler import MOVELLA_PAYLOAD_MODE, MovellaFacade
-from utils.zmq_utils import *
 
 import numpy as np
 from utils.time_utils import get_time
 from collections import OrderedDict
+
+from utils.zmq_utils import PORT_BACKEND, PORT_KILL, PORT_SYNC_HOST
 
 
 ######################################

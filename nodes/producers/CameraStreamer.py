@@ -25,17 +25,19 @@
 #
 # ############
 
+import numpy as np
 from nodes.producers.Producer import Producer
 from streams import CameraStream
 
 from handlers.Basler.BaslerHandler import ImageEventHandler
 import pypylon.pylon as pylon
-from utils.print_utils import *
-from utils.zmq_utils import *
 from collections import OrderedDict
 from utils.live_gui_utils import LiveGUIPoster
 from typing import Optional
 import threading
+
+from utils.time_utils import get_time
+from utils.zmq_utils import PORT_BACKEND, PORT_KILL, PORT_SYNC_HOST
 
 
 #######################################################

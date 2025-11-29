@@ -33,8 +33,7 @@ from openant.devices.scanner import Scanner
 from openant.devices import ANTPLUS_NETWORK_KEY
 
 import queue
-from utils.print_utils import *
-from utils.zmq_utils import *
+from utils.zmq_utils import PORT_BACKEND, PORT_KILL, PORT_SYNC_HOST
 from utils.time_utils import get_time
 
 

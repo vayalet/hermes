@@ -29,7 +29,7 @@ from nodes.producers.Producer import Producer
 from streams import AwindaStream
 
 from handlers.XsensAwinda.XsensHandler import XsensFacade
-from utils.zmq_utils import *
+from utils.zmq_utils import PORT_BACKEND, PORT_KILL, PORT_SYNC_HOST
 
 import numpy as np
 from utils.time_utils import get_time

@@ -27,7 +27,7 @@
 
 from nodes.consumers.Consumer import Consumer
 
-from utils.zmq_utils import *
+from utils.zmq_utils import PORT_FRONTEND, PORT_KILL, PORT_SYNC_HOST
 
 
 class DummyConsumer(Consumer):

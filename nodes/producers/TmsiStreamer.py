@@ -25,6 +25,7 @@
 #
 # ############
 
+import numpy as np
 from handlers.Tmsi.device.tmsi_device import TMSiDevice
 from handlers.Tmsi.sample_data_server.sample_data import SampleData
 from nodes.producers.Producer import Producer
@@ -38,8 +39,7 @@ from handlers.Tmsi.device.devices.saga.saga_API_enums import SagaBaseSampleRate
 from handlers.Tmsi.device.tmsi_channel import ChannelType
 
 import queue
-from utils.print_utils import *
-from utils.zmq_utils import *
+from utils.zmq_utils import PORT_BACKEND, PORT_KILL, PORT_SYNC_HOST
 from utils.time_utils import get_time
 import time
 

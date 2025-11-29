@@ -27,6 +27,7 @@
 
 from abc import ABC, abstractmethod
 from multiprocessing import Process, set_start_method
+import time
 from typing import Callable
 
 import zmq
@@ -36,7 +37,14 @@ from utils.time_utils import *
 from utils.dict_utils import *
 from utils.print_utils import *
 from utils.types import ZMQResult
-from utils.zmq_utils import *
+from utils.zmq_utils import (
+  CMD_ACK, CMD_BYE, CMD_END, CMD_GO, CMD_HELLO, CMD_START_TIME, 
+  IP_LOOPBACK,
+  PORT_BACKEND, PORT_FRONTEND,
+  PORT_KILL, PORT_KILL_BTN,
+  PORT_SYNC_HOST, PORT_SYNC_REMOTE,
+  TOPIC_KILL
+)
 
 
 ################################################################################
@@ -572,7 +580,7 @@ class Broker(BrokerInterface):
 
     # Socket to listen to kill command from the GUI.
     self._gui_btn_kill: zmq.SyncSocket = self._ctx.socket(zmq.REP)
-    self._gui_btn_kill.bind("tcp://*:%s" % (PORT_KILL_BTN))
+    self._gui_btn_kill.bind("tcp://*:%s" % PORT_KILL_BTN)
 
     # Poll object to listen to sockets without blocking
     self._poller: zmq.Poller = zmq.Poller()

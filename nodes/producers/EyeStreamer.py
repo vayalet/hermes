@@ -28,7 +28,7 @@
 from nodes.producers.Producer import Producer
 from streams import EyeStream
 from handlers.PupilLabs.PupilFacade import PupilFacade
-from utils.zmq_utils import *
+from utils.zmq_utils import DNS_LOCALHOST, MSG_OFF, MSG_ON, PORT_BACKEND, PORT_EYE, PORT_KILL, PORT_PAUSE, PORT_SYNC_HOST
 import zmq
 
 

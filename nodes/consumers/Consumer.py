@@ -39,7 +39,7 @@ from collections import OrderedDict
 import zmq
 
 from utils.msgpack_utils import deserialize
-from utils.zmq_utils import *
+from utils.zmq_utils import CMD_END, CMD_EXIT, DNS_LOCALHOST, PORT_FRONTEND, PORT_KILL, PORT_SYNC_HOST
 
 
 ##########################################################
@@ -58,7 +58,7 @@ class Consumer(Node):
                port_sync: str = PORT_SYNC_HOST,
                port_killsig: str = PORT_KILL,
                log_history_filepath: str | None = None) -> None:
-    super().__init__(ref_time=logging_spec["log_time_s"],
+    super().__init__(ref_time=logging_spec["ref_time_s"],
                      host_ip=host_ip,
                      port_sync=port_sync, 
                      port_killsig=port_killsig)

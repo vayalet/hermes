@@ -26,7 +26,7 @@
 # ############
 
 from abc import abstractmethod
-from typing import Any, Callable
+from collections import OrderedDict
 
 import zmq
 import threading
@@ -37,8 +37,7 @@ from handlers.TransmissionDelayHandler import DelayEstimator
 from nodes.Node import Node
 from streams import Stream
 from utils.msgpack_utils import serialize
-from utils.dict_utils import *
-from utils.zmq_utils import *
+from utils.zmq_utils import CMD_END, CMD_EXIT, DNS_LOCALHOST, PORT_BACKEND, PORT_KILL, PORT_SYNC_HOST
 
 
 ###########################################################
@@ -57,7 +56,7 @@ class Producer(Node):
                port_sync: str = PORT_SYNC_HOST,
                port_killsig: str = PORT_KILL,
                transmit_delay_sample_period_s: float = float('nan')) -> None:
-    super().__init__(ref_time=logging_spec["log_time_s"],
+    super().__init__(ref_time=logging_spec["ref_time_s"],
                      host_ip=host_ip,
                      port_sync=port_sync,
                      port_killsig=port_killsig)

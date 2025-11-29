@@ -25,11 +25,12 @@
 #
 # ############
 
+import numpy as np
 from nodes.producers.Producer import Producer
 from streams import ViconStream
+from utils.time_utils import get_time
 from vicon_dssdk import ViconDataStream
-from utils.print_utils import *
-from utils.zmq_utils import *
+from utils.zmq_utils import DNS_LOCALHOST, PORT_BACKEND, PORT_KILL, PORT_SYNC_HOST, PORT_VICON
 import time
 
 

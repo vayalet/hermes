@@ -77,6 +77,7 @@ producer_specs:
     payload_mode      : "RateQuantitieswMag"
     filter_profile    : "General"
     is_sync_devices   : True
+    timesteps_before_stale: 300 # NOTE: Changin this will add latency to when data available to AI, but will make less NaNs 
 
 
 consumer_specs: []
@@ -112,6 +113,8 @@ pipeline_specs:
         payload_mode      : "RateQuantitieswMag"
         filter_profile    : "General"
         is_sync_devices   : True
+        timesteps_before_stale: 300 # NOTE: Changin this will add latency to when data available to AI, but will make less NaNs 
+
 
     logging_spec:
       stream_period_s     : 10

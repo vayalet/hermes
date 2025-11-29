@@ -1,0 +1,8 @@
+{
+    "LIBUSB_WIN_INCLUDE_DIR":  "tmp\\libusb-install/libusb-1.0.26/libusb",
+    "LIBUSB_WIN_IMPORT_LIB_PATH":  "tmp\\libusb-install/libusb-1.0.26-binaries/VS2015-x64/dll/libusb-1.0.lib",
+    "TURBOJPEG_WIN_IMPORT_LIB_PATH":  "tmp\\libjpeg-turbo-install/lib/turbojpeg.lib",
+    "TURBOJPEG_WIN_DLL_SEARCH_PATH":  "tmp\\libjpeg-turbo-install/bin",
+    "TURBOJPEG_WIN_INCLUDE_DIR":  "tmp\\libjpeg-turbo-install/include",
+    "LIBUSB_WIN_DLL_SEARCH_PATH":  "tmp\\libusb-install/libusb-1.0.26-binaries/VS2015-x64/dll"
+}

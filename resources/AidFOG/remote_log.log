@@ -1,15 +1,16 @@
 No module named 'pypylon' 
 Skipping CameraStreamer.
+Reference time: 1764343115.1722496 | perf: 452.2233463
 No module named 'pypylon' 
 Skipping CameraStreamer.
 No module named 'pypylon' 
 Skipping CameraStreamer.
 ai are connected and synced. Wait for RECORDING signal...
-discovered knee_right
-discovered pelvis
-discovered knee_left
-discovered foot_left
 discovered foot_right
+discovered foot_left
+discovered knee_right
+discovered knee_left
+discovered pelvis
 connected to pelvis
 connected to knee_right
 connected to foot_right
@@ -20,13 +21,24 @@ dots are connected and synced. Wait for RECORDING signal...
 192.168.68.100 sent ACK to 192.168.68.101 response
 ai are RECORDING 
 dots are RECORDING 
+Creating a new file
+Creating a new file
+Creating a new file
+Creating a new file
+Creating a new file
+Creating a new file
+Creating a new file
+Creating a new file
+Creating a new file
+Creating a new file
+Creating a new file
 No more packets from Movella SDK, flush buffers into the output Queue.
-ai received BYE from 192.168.68.101.
 Timed out on no more snapshots in the output Queue.
+ai received BYE from 192.168.68.101.
 pelvis disconnected
+knee_right disconnected
 ai Logger safely exited.
 ai exited, goodbye <3
-knee_right disconnected
 foot_right disconnected
 knee_left disconnected
 foot_left disconnected

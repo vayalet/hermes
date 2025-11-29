@@ -44,6 +44,8 @@ logging_spec:
   stream_csv          : False
   stream_video        : True
   stream_audio        : False
+  # incremental_saving  : True
+  # incremental_period  : 90
 
   dump_csv            : False
   dump_hdf5           : False
@@ -76,6 +78,7 @@ producer_specs:
     payload_mode      : "RateQuantitieswMag"
     filter_profile    : "General"
     is_sync_devices   : True
+    timesteps_before_stale: 600
   
   # Stream from the Pupil Labs eye tracker, including gaze and video data.
   - class: "EyeStreamer"

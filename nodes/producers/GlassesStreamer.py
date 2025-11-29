@@ -93,9 +93,9 @@ class GlassesHandler:
             mode.fps == self.camera_spec['fps']):
           self.cap.frame_mode = mode
           break
-        # configure the controls on each `Capture` object (exposure, brightness, sharpness, etc)
-        controls_by_name = {c.display_name: c for c in self.cap.controls}
 
+      # configure the controls on each `Capture` object (exposure, brightness, sharpness, etc)
+      controls_by_name = {c.display_name: c for c in self.cap.controls}
       print(f"Settings controls for {self.camera_spec['name']}", flush=True) 
       for ctrl_name, value in self.camera_spec.get('uvc_controls', {}).items():
         ctrl = controls_by_name.get(ctrl_name)

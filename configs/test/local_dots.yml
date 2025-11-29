@@ -75,6 +75,7 @@ producer_specs:
     payload_mode      : "RateQuantitieswMag"
     filter_profile    : "General"
     is_sync_devices   : True
+    timesteps_before_stale : 600
 
 
 consumer_specs: []

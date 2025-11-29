@@ -59,6 +59,7 @@ class DotsStreamer(Producer):
                is_sync_devices: bool = True,
                payload_mode: str = 'RateQuantitieswMag',
                filter_profile: str = 'General',
+               timesteps_before_stale: int = 100,
                port_pub: str = PORT_BACKEND,
                port_sync: str = PORT_SYNC_HOST,
                port_killsig: str = PORT_KILL,
@@ -72,6 +73,7 @@ class DotsStreamer(Producer):
     self._payload_mode = payload_mode
     self._filter_profile = filter_profile
     self._is_sync_devices = is_sync_devices
+    self._timesteps_before_stale = timesteps_before_stale
     self._device_mapping = device_mapping
     self._mac_mapping = mac_mapping
     self._row_id_mapping = OrderedDict([(device_id, row_id) for row_id, device_id in enumerate(self._device_mapping.values())])
@@ -112,7 +114,8 @@ class DotsStreamer(Producer):
                                   sampling_rate_hz=int(self._sampling_rate_hz),
                                   payload_mode=self._payload_mode,
                                   filter_profile=self._filter_profile,
-                                  is_sync_devices=self._is_sync_devices)
+                                  is_sync_devices=self._is_sync_devices,
+                                  timesteps_before_stale=self._timesteps_before_stale)
     # Keep reconnecting until success
     while not self._handler.initialize():
       self._handler.cleanup()
